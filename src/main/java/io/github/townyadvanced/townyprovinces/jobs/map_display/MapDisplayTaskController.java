@@ -1,4 +1,5 @@
 package io.github.townyadvanced.townyprovinces.jobs.map_display;
+import com.palmergames.bukkit.towny.scheduling.ScheduledTask;
 import io.github.townyadvanced.townyprovinces.TownyProvinces;
 import io.github.townyadvanced.townyprovinces.settings.TownyProvincesSettings;
 
@@ -7,7 +8,7 @@ import java.util.List;
 
 public class MapDisplayTaskController {
 	private static final List<DisplayProvincesOnMapAction> mapDisplayActions = new ArrayList<>();
-	private static MapDisplayTask mapDisplayTask = null;
+	private static ScheduledTask mapDisplayTask = null;
 	private static boolean fullProvinceColoursRefreshRequested;
 	private static boolean fullHomeBlockIconsRefreshRequest;
 	public static boolean startTask() {
@@ -18,8 +19,7 @@ public class MapDisplayTaskController {
 			TownyProvinces.info("Map Display Job Starting");
 			fullProvinceColoursRefreshRequested = true;
 			fullHomeBlockIconsRefreshRequest = true;
-			mapDisplayTask = new MapDisplayTask();
-			TownyProvinces.getPlugin().getScheduler().runAsyncRepeating(mapDisplayTask, 40, TownyProvincesSettings.getMapRefreshPeriodMilliseconds() * 20);
+			mapDisplayTask = TownyProvinces.getPlugin().getScheduler().runAsyncRepeating(new MapDisplayTask(), 40, TownyProvincesSettings.getMapRefreshPeriodMilliseconds() * 20);
 			TownyProvinces.info("Map Display Job Started");
 			return true;
 		}
@@ -39,8 +39,7 @@ public class MapDisplayTaskController {
 			}
 		}
 		requestFullMapRefresh();
-		mapDisplayTask = new MapDisplayTask();
-		TownyProvinces.getPlugin().getScheduler().runAsyncRepeating(mapDisplayTask, 40, TownyProvincesSettings.getMapRefreshPeriodMilliseconds() * 20);
+		mapDisplayTask = TownyProvinces.getPlugin().getScheduler().runAsyncRepeating(new MapDisplayTask(), 40, TownyProvincesSettings.getMapRefreshPeriodMilliseconds() * 20);
 	}
 
 	public static void requestFullMapRefresh() {

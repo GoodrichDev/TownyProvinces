@@ -5,8 +5,8 @@ import com.palmergames.bukkit.towny.exceptions.initialization.TownyInitException
 import com.palmergames.bukkit.towny.object.Translatable;
 import com.palmergames.bukkit.towny.object.TranslationLoader;
 import com.palmergames.bukkit.towny.scheduling.TaskScheduler;
-import com.palmergames.bukkit.towny.scheduling.impl.BukkitTaskScheduler;
 import com.palmergames.bukkit.towny.scheduling.impl.FoliaTaskScheduler;
+import com.palmergames.bukkit.towny.scheduling.impl.PaperTaskScheduler;
 import com.palmergames.bukkit.util.Colors;
 import com.palmergames.bukkit.util.Version;
 import io.github.townyadvanced.townyprovinces.commands.TownyProvincesAdminCommand;
@@ -47,7 +47,7 @@ public class TownyProvinces extends JavaPlugin {
 
 	public TownyProvinces() {
 		plugin = this;
-		this.scheduler = isFoliaClassPresent() ? new FoliaTaskScheduler(this) : new BukkitTaskScheduler(this);
+		this.scheduler = isFoliaClassPresent() ? new FoliaTaskScheduler(this) : new PaperTaskScheduler(this);
 	}
 	@Override
 	public void onEnable() {
