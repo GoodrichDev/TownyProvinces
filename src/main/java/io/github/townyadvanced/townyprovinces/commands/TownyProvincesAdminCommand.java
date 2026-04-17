@@ -174,6 +174,7 @@ public class TownyProvincesAdminCommand implements TabExecutor {
 		if (args[0].equalsIgnoreCase("status")) {
 			Translatable status = Translatable.of(LandValidationTaskController.getLandValidationJobStatus().getLanguageKey());
 			Messaging.sendMsg(sender, Translatable.of("msg_land_validation_job_status").append(status));
+			Messaging.sendMsg(sender, "Progress: " + LandValidationTaskController.getProgressSummary());
 			
 		} else if (args[0].equalsIgnoreCase("start")) {
 			if (LandValidationTaskController.getLandValidationJobStatus().equals(LandValidationJobStatus.STOPPED)

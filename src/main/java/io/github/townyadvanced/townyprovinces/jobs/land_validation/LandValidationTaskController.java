@@ -5,8 +5,12 @@ import com.palmergames.bukkit.towny.object.Translatable;
 import io.github.townyadvanced.townyprovinces.TownyProvinces;
 import io.github.townyadvanced.townyprovinces.messaging.Messaging;
 
+import java.util.Locale;
+
 public class LandValidationTaskController {
 	private static LandValidationJobStatus landValidationJobStatus;
+	private static volatile int totalProvinces;
+	private static volatile int processedProvinces;
 
 	static {
 		//Could actually be paused, so this could be misleading
@@ -16,6 +20,8 @@ public class LandValidationTaskController {
 
 	private static ScheduledTask landValidationTask = null;
 	public static void startTask() {
+		totalProvinces = 0;
+		processedProvinces = 0;
 		landValidationTask = TownyProvinces.getPlugin().getScheduler().runAsync(new LandvalidationTask());
 		landValidationJobStatus = LandValidationJobStatus.STARTED;
 		Messaging.sendGlobalMessage(Translatable.of("msg_land_validation_job_started"));
@@ -54,6 +60,21 @@ public class LandValidationTaskController {
 
 	public static void setLandValidationJobStatus(LandValidationJobStatus status) {
 		landValidationJobStatus = status;
+	}
+
+	public static void setProgress(int processed, int total) {
+		processedProvinces = processed;
+		totalProvinces = total;
+	}
+
+	public static String getProgressSummary() {
+		if (totalProvinces <= 0) {
+			return "Initializing.";
+		}
+
+		double percent = (processedProvinces * 100.0) / totalProvinces;
+		int remaining = Math.max(totalProvinces - processedProvinces, 0);
+		return processedProvinces + "/" + totalProvinces + " (" + String.format(Locale.ROOT, "%.1f", percent) + "%), " + remaining + " remaining";
 	}
 	
 }

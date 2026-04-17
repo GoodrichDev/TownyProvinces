@@ -71,19 +71,20 @@ public class LandvalidationTask extends BukkitRunnable {
 	 */
 	private void executeLandValidation() {
 		TownyProvinces.info("Now Running land validation job.");
-		double numProvincesProcessed = 0;
+		int numProvincesProcessed = 0;
 		Set<Province> copyOfProvincesSet = new HashSet<>(TownyProvincesDataHolder.getInstance().getProvincesSet());
 		for(Province province : copyOfProvincesSet) {
 			if(!province.isLandValidationRequested())
 				numProvincesProcessed++;  //Already processed
 		}
+		LandValidationTaskController.setProgress(numProvincesProcessed, copyOfProvincesSet.size());
 		for(Province province: copyOfProvincesSet) {
 			if (province.isLandValidationRequested()) {
 				doLandValidation(province);
 				numProvincesProcessed++;
 			}
-			int percentCompletion = (int)((numProvincesProcessed / copyOfProvincesSet.size()) * 100);
-			TownyProvinces.info("Land Validation Job Progress: " + percentCompletion + "%");
+			LandValidationTaskController.setProgress(numProvincesProcessed, copyOfProvincesSet.size());
+			TownyProvinces.info("Land Validation Job Progress: " + LandValidationTaskController.getProgressSummary());
 
 			//Handle any stop requests
 			LandValidationJobStatus landValidationJobStatus = LandValidationTaskController.getLandValidationJobStatus();
@@ -124,6 +125,11 @@ public class LandvalidationTask extends BukkitRunnable {
 	 */
 	private void doLandValidation(Province province) {
 		List<TPCoord> coordsInProvince = province.getListOfCoordsInProvince();
+		if (coordsInProvince.isEmpty()) {
+			province.setLandValidationRequested(false);
+			province.saveData();
+			return;
+		}
 		World world = Bukkit.getWorld(TownyProvincesSettings.getWorldName());
 		TPCoord coordToTest;
 		double goodLand = 0;
