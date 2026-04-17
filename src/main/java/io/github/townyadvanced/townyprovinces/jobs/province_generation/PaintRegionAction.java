@@ -132,7 +132,7 @@ public class PaintRegionAction {
 			province = generateProtectedProvince(mapEntry.getValue());
 			if(province == null) {
 				TownyProvinces.severe("Could not generate province at protected location: " + mapEntry.getKey());
-				return false;
+				continue;
 			} else {
 				TownyProvincesDataHolder.getInstance().addProvince(province);
 				provincesCreated++;

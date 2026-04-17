@@ -21,6 +21,8 @@ public class RegenerateRegionTaskController {
 			return true;
 		}
 	}
-}
 
- 
+	static void endTask() {
+		regenerateRegionTask = null;
+	}
+}

@@ -79,6 +79,7 @@ public class RegenerateRegionTask extends BukkitRunnable {
 		}
 		if(!paintingSuccess) {
 			TownyProvinces.info("Problem Painting Regions");
+			RegenerateRegionTaskController.endTask();
 			return;
 		}
 		//Recalculated all prices
@@ -93,6 +94,7 @@ public class RegenerateRegionTask extends BukkitRunnable {
 			TownyProvinces.info(Translatable.of("msg_successfully_regenerated_one_regions", givenRegionName).translate(Locale.ROOT));
 		}
 		TownyProvinces.info("Region regeneration Job Complete"); //TODO - maybe global message?
+		RegenerateRegionTaskController.endTask();
 	}
 
 	public boolean paintAllRegions() {
@@ -131,5 +133,3 @@ public class RegenerateRegionTask extends BukkitRunnable {
 	}
 
 }
-
- 

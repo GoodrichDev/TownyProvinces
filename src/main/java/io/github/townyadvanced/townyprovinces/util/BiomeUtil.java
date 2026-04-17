@@ -1,11 +1,15 @@
 package io.github.townyadvanced.townyprovinces.util;
 
+import io.github.townyadvanced.townyprovinces.TownyProvinces;
 import io.github.townyadvanced.townyprovinces.jobs.land_validation.BiomeType;
 import io.github.townyadvanced.townyprovinces.objects.TPCoord;
 import io.github.townyadvanced.townyprovinces.settings.TownyProvincesSettings;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
+
+import java.util.concurrent.CompletableFuture;
 
 public class BiomeUtil {
 	
@@ -18,7 +22,22 @@ public class BiomeUtil {
 	public static BiomeType getBiomeType(World world, TPCoord coordToTest) {
 		int x = (coordToTest.getX() * TownyProvincesSettings.getChunkSideLength()) + 8;
 		int z = (coordToTest.getZ() * TownyProvincesSettings.getChunkSideLength()) + 8;
-		Material material = world.getHighestBlockAt(x,z).getType();
+		Material material;
+		Location location = new Location(world, x, 0, z);
+		if (TownyProvinces.getPlugin().getScheduler().isRegionThread(location)
+			|| (!TownyProvinces.isFoliaClassPresent() && TownyProvinces.getPlugin().getScheduler().isTickThread())) {
+			material = world.getHighestBlockAt(x, z).getType();
+		} else {
+			CompletableFuture<Material> materialFuture = new CompletableFuture<>();
+			TownyProvinces.getPlugin().getScheduler().run(location, () -> {
+				try {
+					materialFuture.complete(world.getHighestBlockAt(x, z).getType());
+				} catch (Throwable t) {
+					materialFuture.completeExceptionally(t);
+				}
+			});
+			material = materialFuture.join();
+		}
 		try {
 			Thread.sleep(TownyProvincesSettings.getPauseMillisecondsBetweenBiomeLookups()); //Sleep because the biome lookup can be hard on processor
 		} catch (InterruptedException e) {
